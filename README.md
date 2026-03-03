@@ -251,17 +251,6 @@ serverless-ticket-tracker/
 
 ---
 
-## Improvements / Roadmap
-
-- [ ] Add GSI on `status` or `channel` to replace `scan()` with `query()` for scale
-- [ ] Pagination (`lastEvaluatedKey`) on the list endpoint
-- [ ] JSON Schema request validation
-- [ ] Structured logging with correlation IDs
-- [ ] GitHub Actions CI/CD pipeline → `sam deploy`
-- [ ] Unit tests with `pytest` + `moto` (DynamoDB mock)
-
----
-
 ## Initialize GitHub Repo
 
 ```bash
