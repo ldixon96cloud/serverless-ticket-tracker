@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless Ticket Tracker (Lambda + DynamoDB + HTTP API)
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 10
+    MemorySize: 256
+    Tracing: Active
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref TicketsTable
+
+Resources:
+  TicketsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Tickets
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: ticketId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ticketId
+          KeyType: HASH
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: prod
+
+  CreateTicketFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/create_ticket/
+      Handler: app.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TicketsTable
+      Events:
+        Create:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /tickets
+            Method: POST
+    Metadata:
+      BuildMethod: python3.12
+
+  GetTicketFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/get_ticket/
+      Handler: app.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TicketsTable
+      Events:
+        Get:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /tickets/{ticketId}
+            Method: GET
+    Metadata:
+      BuildMethod: python3.12
+
+  ListTicketsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/list_tickets/
+      Handler: app.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TicketsTable
+      Events:
+        List:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /tickets
+            Method: GET
+    Metadata:
+      BuildMethod: python3.12
+
+  UpdateTicketFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/update_ticket/
+      Handler: app.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TicketsTable
+      Events:
+        Update:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /tickets/{ticketId}
+            Method: PATCH
+    Metadata:
+      BuildMethod: python3.12
+
+  DeleteTicketFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../src/delete_ticket/
+      Handler: app.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TicketsTable
+      Events:
+        Delete:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /tickets/{ticketId}
+            Method: DELETE
+    Metadata:
+      BuildMethod: python3.12
+
+Outputs:
+  ApiBaseUrl:
+    Description: Base URL for the deployed HTTP API
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/prod"

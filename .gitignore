@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.aws-sam/
+samconfig.toml
+.DS_Store
+
+# common/ copies synced by scripts/sync_common.sh — not committed
+src/create_ticket/common/
+src/get_ticket/common/
+src/list_tickets/common/
+src/update_ticket/common/
+src/delete_ticket/common/
