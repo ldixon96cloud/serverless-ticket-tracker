@@ -262,15 +262,6 @@ serverless-ticket-tracker/
 
 ---
 
-## Resume Bullets
-
-- Built a serverless REST API using AWS Lambda (Python), API Gateway, and DynamoDB to manage production-style support tickets across multiple digital ordering channels (KIOSK, POS, DMB, DELIVERY).
-- Implemented full CRUD workflows with conditional writes for idempotent updates, DynamoDB 404 handling, and CORS support for frontend integration.
-- Packaged infrastructure as code with AWS SAM and documented repeatable deployment and API testing procedures in GitHub.
-- Enabled observability with CloudWatch structured logging and X-Ray active tracing across all Lambda functions.
-
----
-
 ## Initialize GitHub Repo
 
 ```bash
